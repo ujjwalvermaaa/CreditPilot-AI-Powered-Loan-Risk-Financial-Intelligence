@@ -1,0 +1,431 @@
+CreditPilot: A Multi-Layer Intelligent Credit Risk Assessment and Loan Advisory Framework Using Machine Learning, Financial Stability Scoring, and Interactive Decision Support
+
+Suggested Author Line:
+Ujjwal [Add surname here before submission]
+Department / Institution: [Add your college or university here]
+Email: [Add your institutional or personal email here]
+
+Abstract
+
+Credit evaluation is a mission-critical process for banks, non-banking financial companies, and digital lending platforms. Conventional credit screening systems often rely on static cut-offs, manual underwriting checks, and limited explainability, which can reduce scalability and make it difficult to personalize lending decisions. This paper presents CreditPilot, a practical multi-layer credit intelligence framework that combines machine learning-based default prediction, a Financial Stability Index (FSI), stress testing, explainable decision support, loan recommendation logic, personalized interest rate estimation, prepayment analysis, co-applicant optimization, and portfolio-level risk analytics in a single deployable system.
+
+The framework is implemented as an interactive Streamlit application supported by Python, Pandas, NumPy, scikit-learn, XGBoost, Plotly, and joblib. Experimental analysis on a structured applicant dataset of 10,000 records shows that the benchmark XGBoost model achieves 90.30% accuracy, 92.99% precision, 89.91% recall, 91.42% F1-score, and 96.76% ROC-AUC. In addition, the extended CreditPilot bundle achieves 89.80% approval-model accuracy with 96.66% ROC-AUC, while the personalized interest-rate estimation module obtains a mean absolute error of 0.502 and an R-squared value of 0.854. Stress experiments further demonstrate that adverse scenarios significantly increase EMI burden and credit utilization pressure.
+
+Unlike many academic prototypes limited to binary approve/reject prediction, CreditPilot acts as an advisory system by producing optimized loan options, scenario comparison, rejection explanations, improvement suggestions, borrower benchmarking, and user profile tracking. The proposed framework is suitable as a research prototype and as a practical decision-support architecture for modern credit-risk applications.
+
+Keywords
+
+Credit Risk Assessment, Loan Decision Support, Financial Stability Index, Explainable AI, Stress Testing, Interest Rate Estimation, Loan Recommendation Engine, FinTech Analytics
+
+1. INTRODUCTION
+
+Credit underwriting is central to the financial health of lending institutions. Poor risk estimation contributes to elevated default rates, increased operational losses, and weaker portfolio quality. Traditional lending decisions are often based on rigid scorecards, credit score thresholds, debt-to-income checks, and manual review policies. Although such practices are easy to interpret, they generally fail to capture complex interactions among borrower income behavior, credit utilization, repayment history, loan structure, and repayment stress.
+
+Recent advances in machine learning offer significant improvements in predictive modeling for credit risk. However, many deployed or academic systems still exhibit one or more of the following shortcomings:
+
+1. Limited interpretability for end-users and loan officers.
+2. Static decision logic that does not reflect borrower-specific financial resilience.
+3. Lack of advisory functionality beyond approval or rejection.
+4. Absence of scenario-based stress testing and post-decision planning.
+5. Weak integration between predictive modeling and product-level loan design.
+
+To address these gaps, this work proposes CreditPilot, a multi-layer credit intelligence framework that is both predictive and advisory. Rather than stopping at default classification, the system supports optimized loan recommendations, personalized pricing, EMI planning, co-applicant evaluation, stress simulation, administrative portfolio analytics, and profile tracking. The result is a more complete credit decision-support environment aligned with practical lending workflows.
+
+The main contributions of this paper are as follows:
+
+1. A deployable end-to-end credit intelligence framework integrating prediction, risk scoring, pricing, and advisory logic.
+2. A Financial Stability Index that summarizes borrower resilience using credit, debt, EMI burden, utilization, and income stability.
+3. A loan recommendation layer that suggests loan type, amount, and tenure instead of only giving a binary decision.
+4. A personalized interest-rate estimation module using supervised regression.
+5. A stress and affordability module for prepayment, foreclosure, and future-risk evaluation.
+6. An explainable interface that supports rejection reasoning, borrower benchmarking, and practical improvement suggestions.
+
+2. RELATED WORK
+
+Credit scoring has been studied extensively using both statistical and machine learning techniques. Logistic Regression remains widely used because of its simplicity and interpretability, especially in regulated lending environments. Decision trees and Random Forest models improved performance by capturing non-linear relations and feature interactions. Gradient boosting techniques, including XGBoost, have further improved predictive performance in structured tabular credit-risk problems.
+
+Despite strong progress in classification performance, many credit-scoring systems remain limited in at least three ways. First, prediction is often treated as the final output, whereas practical lending requires product design, affordability testing, and pricing support. Second, explainability is commonly added as a separate layer rather than being integrated into the underwriting flow. Third, model outputs are rarely connected to stress scenarios such as income shock or interest-rate shock, even though these are directly relevant to repayment sustainability.
+
+Recent work in explainable AI emphasizes transparency, feature contribution analysis, and trust. Similarly, portfolio analytics and borrower stress testing are increasingly important in both risk governance and digital lending platforms. CreditPilot builds on these directions by combining interpretable rule-based financial intelligence with machine learning, thereby balancing predictive strength and operational usefulness.
+
+3. SYSTEM OVERVIEW
+
+CreditPilot is implemented as a modular credit intelligence application. The framework contains the following layers:
+
+1. Predictive default-risk classification.
+2. Financial Stability Index computation.
+3. Rule-guided decision and risk categorization.
+4. Loan recommendation and scenario comparison.
+5. Personalized interest-rate estimation.
+6. Prepayment and foreclosure analysis.
+7. Co-applicant optimization.
+8. Administrative risk and portfolio dashboards.
+9. Rule-based assistant for user guidance.
+
+The application stack used in the actual project is:
+
+- Frontend and interaction layer: Streamlit
+- Visualization layer: Plotly
+- Core language: Python
+- Data processing: Pandas and NumPy
+- Classification and regression: scikit-learn and XGBoost
+- Model persistence: joblib and pickle
+
+This is materially different from generic web-stack templates; the implemented project is a Python-first analytic system optimized for interactive financial intelligence.
+
+4. DATASET DESCRIPTION
+
+The project uses a structured applicant dataset stored in raw and processed forms. The raw file contains financial and demographic variables, while the processed dataset is used for benchmark model training and evaluation. In the present project version, both raw and processed exports contain 10,000 records and 26 columns.
+
+4.1 Dataset Profile
+
+Table 1. Dataset summary
+
+| Attribute | Value |
+|---|---:|
+| Raw dataset size | 10,000 x 26 |
+| Processed dataset size | 10,000 x 26 |
+| Mean credit score | 679.70 |
+| Mean interest rate | 10.51% |
+| Mean loan amount | Rs. 342,324.62 |
+| Mean debt-to-income ratio | 1.7551 |
+| Mean credit utilization | 0.2858 |
+| Default rate | 57.49% |
+| Approval rate | 42.51% |
+
+4.2 Core Variables
+
+Table 2. Major features used in CreditPilot
+
+| Feature | Description |
+|---|---|
+| age | Age of borrower |
+| employment_type | Salaried, self-employed, or unemployed |
+| employment_length_years | Employment duration |
+| annual_income | Annual borrower income |
+| income_stability_score | Stability score for income consistency |
+| loan_amount | Requested or simulated loan amount |
+| loan_term_months | Repayment tenure in months |
+| interest_rate | Interest rate applied to loan |
+| emi | Monthly installment amount |
+| total_existing_loans | Number of already active loans |
+| total_debt | Current debt obligation |
+| debt_to_income_ratio | Debt burden relative to annual income |
+| credit_score | Creditworthiness indicator |
+| credit_utilization_ratio | Revolving credit usage ratio |
+| emi_to_income_ratio | EMI burden relative to monthly income |
+| loan_to_income_ratio | Loan size relative to income |
+| num_credit_inquiries | Recent credit checks |
+| late_payment_count | Recent late payment history |
+| default_history | Historical default flag |
+| repayment_history_score | Composite repayment behavior score |
+| credit_history_length_years | Length of credit history |
+| job_stability_score | Employment continuity score |
+| spending_to_income_ratio | Consumption pressure indicator |
+| loan_status | Binary target variable |
+
+4.3 Category Distribution
+
+Table 3. Loan-type distribution
+
+| Loan Type | Count | Default Rate |
+|---|---:|---:|
+| Personal | 4047 | 37.36% |
+| Education | 2025 | 41.98% |
+| Auto | 1984 | 72.73% |
+| Home | 1944 | 100.00% |
+
+Table 4. Employment-type distribution
+
+| Employment Type | Count | Default Rate |
+|---|---:|---:|
+| Salaried | 6044 | 57.31% |
+| Self-employed | 2972 | 58.82% |
+| Unemployed | 984 | 54.57% |
+
+4.4 Preprocessing Pipeline
+
+The preprocessing pipeline includes:
+
+1. Reading raw and processed tabular data.
+2. Engineering domain features such as EMI-to-income ratio, debt-to-income ratio, loan-to-income ratio, and composite credit-risk score.
+3. Encoding categorical variables such as `employment_type` and `loan_type`.
+4. Standardizing numerical variables for the processed benchmark dataset.
+5. Persisting trained model artifacts for downstream inference.
+
+5. METHODOLOGY
+
+The CreditPilot methodology combines machine learning with domain-aware financial logic. The system does not rely solely on classification output; instead, it converts prediction into advisory intelligence.
+
+5.1 Benchmark Classification Layer
+
+Three classification models were benchmarked on the processed dataset:
+
+1. Logistic Regression
+2. Random Forest
+3. XGBoost
+
+These models were trained using an 80:20 train-test split with `random_state=42` and stratified sampling for fair target distribution in the test set.
+
+5.2 Advanced Approval and Pricing Bundle
+
+An additional model bundle was trained on the raw applicant dataset:
+
+- Approval model: RandomForestClassifier with preprocessing pipeline
+- Interest estimator: RandomForestRegressor with preprocessing pipeline
+
+This advanced bundle supports the deployed advisory modules, including approval-probability scoring and personalized interest-rate estimation.
+
+5.3 EMI Computation
+
+The equated monthly installment is computed as:
+
+EMI = [P * r * (1 + r)^n] / [(1 + r)^n - 1]
+
+where:
+
+- P = loan principal
+- r = monthly interest rate
+- n = number of months
+
+This EMI value is reused throughout the application in affordability analysis, recommendation generation, scenario comparison, and prepayment analysis.
+
+5.4 Feature Engineering Logic
+
+CreditPilot computes several domain-derived variables:
+
+- EMI-to-income ratio = EMI / monthly income
+- Loan-to-income ratio = loan amount / annual income
+- Debt-to-income ratio = total debt / annual income
+
+In addition, a composite credit-risk score is formed as:
+
+Credit Risk Score =
+0.4 * (850 - credit_score)
++ 0.3 * 100 * debt_to_income_ratio
++ 0.3 * 100 * credit_utilization_ratio
+
+5.5 Financial Stability Index
+
+The Financial Stability Index is implemented directly in the project as:
+
+FSI = 100 * [0.25*(income_stability_score/100)
+           + 0.20*credit_norm
+           + 0.20*(1 - debt_to_income_ratio)
+           + 0.15*(1 - emi_to_income_ratio)
+           + 0.20*(1 - credit_utilization_ratio)]
+
+where:
+
+credit_norm = (credit_score - 300) / (850 - 300)
+
+This score provides a normalized financial resilience view beyond classification probability.
+
+5.6 Decision Logic
+
+Risk categorization is computed using both model probability and FSI:
+
+- High Risk if probability > 0.70 or FSI < 50
+- Medium Risk if probability > 0.40 or FSI < 65
+- Low Risk otherwise
+
+Final decision rules are:
+
+- APPROVED if probability < 0.40 and FSI > 70
+- CONDITIONAL if probability < 0.60 and FSI > 55
+- REJECTED otherwise
+
+5.7 Advisory Modules
+
+CreditPilot extends beyond classification by adding:
+
+1. Loan recommendation engine:
+   Evaluates loan type, amount, tenure, approval likelihood, and utility score.
+
+2. Smart interest-rate estimator:
+   Predicts personalized pricing using borrower and loan attributes.
+
+3. Prepayment and foreclosure analyzer:
+   Measures interest saved and tenure reduced under extra monthly payment.
+
+4. Co-applicant optimization:
+   Re-estimates approval after simulated income support and blended credit strength.
+
+5. Approval-probability graph and variable-impact analysis:
+   Shows how approval changes with borrower improvements.
+
+6. Financial goal planner:
+   Suggests safe loan amount and comfortable EMI for future goals.
+
+7. Risk heatmap dashboard:
+   Visualizes high-risk regions by debt burden and credit band.
+
+8. Borrower benchmarking and explanation engine:
+   Compares current applicant values to portfolio medians and explains key rejection drivers.
+
+9. Rule-based assistant:
+   Provides targeted guidance such as EMI reduction, co-applicant advice, rate negotiation tips, and approval-improvement plans.
+
+6. EXPERIMENTAL SETUP
+
+The experiments were carried out within the project environment using Python 3.11 and the libraries available in the implementation. The benchmark models were trained and evaluated on the processed dataset. The advanced bundle was trained on the raw dataset with preprocessing performed inside scikit-learn pipelines.
+
+The following evaluation metrics were used:
+
+- Accuracy
+- Precision
+- Recall
+- F1-score
+- ROC-AUC for classification
+- Mean Absolute Error (MAE) for interest-rate prediction
+- R-squared for regression fit
+
+7. RESULTS AND ANALYSIS
+
+7.1 Benchmark Classification Results
+
+Table 5. Benchmark classifier performance
+
+| Model | Accuracy | Precision | Recall | F1-score | ROC-AUC |
+|---|---:|---:|---:|---:|---:|
+| Logistic Regression | 0.8960 | 0.9251 | 0.8913 | 0.9079 | 0.9680 |
+| Random Forest | 0.8945 | 0.9188 | 0.8957 | 0.9071 | 0.9667 |
+| XGBoost | 0.9030 | 0.9299 | 0.8991 | 0.9142 | 0.9676 |
+
+Observation:
+XGBoost achieved the highest overall accuracy and F1-score, indicating the strongest balance between precision and recall on the processed benchmark dataset. Logistic Regression remained highly competitive in ROC-AUC, suggesting that the dataset structure is also favorable to well-regularized linear models.
+
+7.2 Advanced CreditPilot Bundle Results
+
+Table 6. Advanced model bundle performance
+
+| Module | Metric | Value |
+|---|---|---:|
+| Approval model | Accuracy | 0.8980 |
+| Approval model | ROC-AUC | 0.9666 |
+| Interest estimator | MAE | 0.5019 |
+| Interest estimator | R-squared | 0.8544 |
+
+Observation:
+The advanced bundle demonstrates that product-level advisory tasks can be added without severely compromising predictive quality. The approval model remains highly competitive, while the interest-rate estimator shows strong fit for personalized pricing support.
+
+7.3 Stress Scenario Analysis
+
+Table 7. Aggregate stress-test summary
+
+| Scenario | Income Drop | Rate Increase | Avg EMI-to-Income | Avg Credit Utilization |
+|---|---:|---:|---:|---:|
+| Mild | 10% | 1% | 0.3601 | 0.3358 |
+| Moderate | 25% | 3% | 0.4407 | 0.4358 |
+| Severe | 45% | 6% | 0.6184 | 0.5853 |
+
+Observation:
+The stress engine shows a strong escalation in borrower strain under adverse conditions. The average EMI-to-income ratio rises from manageable levels in the mild case to severe payment pressure in the severe case, validating the need for scenario-sensitive underwriting.
+
+7.4 Interpretation of Findings
+
+The experimental results support four major conclusions:
+
+1. CreditPilot achieves strong classification performance on structured loan-risk data.
+2. Adding financial scoring and advisory logic improves the operational usefulness of the system.
+3. The personalized interest estimator enables a more realistic loan-offer experience.
+4. Stress testing reveals borrower fragility that may not be obvious from a single approval score.
+
+8. FIGURES GENERATED FOR THE MANUSCRIPT
+
+The following figure assets were generated directly from the current project and are available in the `paper_assets/` folder for insertion into a conference or journal manuscript:
+
+Figure 1. Credit score distribution by loan status
+File: `paper_assets/figure_credit_score_distribution.png`
+
+Figure 2. Loan-status distribution by loan type
+File: `paper_assets/figure_loan_type_status.png`
+
+Figure 3. Correlation heatmap of key financial variables
+File: `paper_assets/figure_correlation_heatmap.png`
+
+Figure 4. Top 12 XGBoost feature importances
+File: `paper_assets/figure_feature_importance.png`
+
+Figure 5. XGBoost confusion matrix
+File: `paper_assets/figure_confusion_matrix_xgb.png`
+
+Additional CSV tables are also available for manuscript formatting:
+
+- `paper_assets/table_model_performance.csv`
+- `paper_assets/table_stress_scenarios.csv`
+- `paper_assets/table_loan_type_default_rate.csv`
+- `paper_assets/table_employment_default_rate.csv`
+- `paper_assets/table_dataset_describe.csv`
+
+9. IMPLEMENTED APPLICATION FEATURES
+
+A major distinguishing factor of CreditPilot is that the research artifact is already implemented as an interactive system rather than remaining only a theoretical model. The project currently supports:
+
+1. Smart application evaluation
+2. Loan recommendation lab
+3. Dynamic EMI and prepayment planning
+4. Financial goal planner
+5. Administrative risk dashboards
+6. User profile and history tracking
+7. Smart credit assistant
+8. Automated rejection explanation
+9. Borrower benchmarking
+10. Approval probability and variable-impact graphs
+
+This makes the contribution stronger from an applied FinTech perspective.
+
+10. PRACTICAL APPLICATIONS
+
+The proposed framework can be applied in:
+
+1. Retail banking loan screening
+2. NBFC and digital-lending decision support
+3. Internal underwriting analytics
+4. Loan product personalization
+5. Credit advisory and customer self-service portals
+6. Portfolio-quality monitoring for risk managers
+
+11. LIMITATIONS
+
+The current research prototype has the following limitations:
+
+1. The dataset is synthetic/project-generated rather than institutionally collected production data.
+2. No fairness audit across protected attributes has been performed in the current version.
+3. External bureau APIs and live banking integrations are not yet connected.
+4. Temporal drift and out-of-time validation are not covered in the current experiment.
+5. Regulatory explainability can be expanded further using SHAP or similar local explanation techniques.
+
+These limitations should be stated clearly during publication submission.
+
+12. FUTURE WORK
+
+Future research directions include:
+
+1. Validation on real-world financial datasets.
+2. Calibration analysis and probability reliability study.
+3. Fairness and bias auditing across applicant groups.
+4. Integration with fraud signals and document verification.
+5. Live bureau and transaction-stream integration.
+6. Hybrid explainability using SHAP, counterfactual explanations, and policy rules.
+7. Longitudinal portfolio optimization across changing macroeconomic conditions.
+
+13. CONCLUSION
+
+This paper presented CreditPilot, a multi-layer intelligent credit-risk assessment and loan advisory framework developed as a complete working project. The proposed approach integrates classification, financial stability scoring, recommendation logic, personalized pricing, stress testing, explanation, and portfolio analytics within a single interactive system. Experimental evaluation shows that the framework achieves strong predictive performance, with XGBoost reaching 90.30% accuracy and 91.42% F1-score, while the advanced approval and pricing bundle supports practical decision-support use cases with strong ROC-AUC and regression quality.
+
+The key contribution of CreditPilot lies not only in predictive accuracy but in transforming credit scoring into an actionable and explainable advisory workflow. This makes the project suitable for academic publication, project demonstration, and future real-world adaptation in financial technology systems.
+
+ACKNOWLEDGMENT
+
+The author may optionally add a short acknowledgment section here for project mentors, institution support, or lab supervision before submission.
+
+REFERENCES
+
+[1] L. C. Thomas, D. B. Edelman, and J. N. Crook, Credit Scoring and Its Applications, SIAM, 2002.
+[2] L. Breiman, "Random Forests," Machine Learning, vol. 45, no. 1, pp. 5-32, 2001.
+[3] C. M. Bishop, Pattern Recognition and Machine Learning, Springer, 2006.
+[4] D. J. Hand and W. E. Henley, "Statistical Classification Methods in Consumer Credit Scoring: A Review," Journal of the Royal Statistical Society: Series A, vol. 160, no. 3, pp. 523-541, 1997.
+[5] T. Chen and C. Guestrin, "XGBoost: A Scalable Tree Boosting System," Proceedings of the 22nd ACM SIGKDD International Conference on Knowledge Discovery and Data Mining, pp. 785-794, 2016.
+[6] J. Brownlee, Machine Learning for Tabular Data, practical reference for structured prediction workflows.
+[7] B. Baesens, Credit Risk Modeling Using Python and Machine Learning Techniques, academic and applied reference.
